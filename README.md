@@ -2,12 +2,11 @@
 
 This is a fork of the - missing in action - github official repository [undrop-for-innodb](http://github.com/twindb/undrop-for-innodb/) bundled with my database recovery scripts !
 
-# TwinDB data recovery toolkit
+Please note that I am not affiliated with TwinDB an provide no support for this tool. If you need professional support goto >> Commercial Support and Data Recovery Service
+
 ## Supported Failures
 
-[![Join the chat at https://gitter.im/twindb/undrop-for-innodb](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/twindb/undrop-for-innodb?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-TwinDB Data Recovery Toolkit is a set of tools that operate with MySQL files at low level and allow to recover InnoDB databases after different failure scenarios.
+This is a set of tools that operate with MySQL files at low level and allow to recover InnoDB databases after different failure scenarios.
 
 The toolkit is also known as **UnDrop for InnoDB**, which is more accurate name because the toolkit works with InnoDB tables.
 
@@ -24,11 +23,11 @@ The tool recovers data when backups are not available. It supports recovery from
 
 ## Installation
 
-The source code of the toolkit is hosted on GitHub. The tool has been developed on Linux, it’s known to work on CentOS 4,5,6,7, Debian, Ubuntu and Amazon Linux. Only 64 bit systems are supported.
+The source code of the toolkit is hosted on Bitbucket. The tool has been developed on Linux, it’s known to work on CentOS 4,5,6,7, Debian, Ubuntu and Amazon Linux. Only 64 bit systems are supported.
 
-To best way to get the source code is to clone it from GitHub.
+To best way to get the source code is to clone it from Bitbucket.
 ```
-git clone https://github.com/twindb/undrop-for-innodb.git
+git clone https://bitbucket.org/Marc-T/undrop-for-innodb.git
 ```
 
 ### Prerequisites
@@ -56,7 +55,7 @@ There is a series of blog posts that describe in great details recovery from dif
 ## Commercial Support and Data Recovery Service
 
 You can recover your database using the toolkit and detailed instructions from the blog posts. 
-We can help you to do it much faster.
+TwinDB can help you to do it much faster.
 
 [Aleksandr Kuzminsky](https://www.linkedin.com/in/akuzminsky) is an author of TwinDB data recovery toolkit and its forks. 
 Since 2008 he dealt with many hundreds recovery cases.
