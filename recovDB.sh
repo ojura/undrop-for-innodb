@@ -20,7 +20,8 @@ for frmFile in $1/$2/*.frm
 do
   echo "Start $frmFile"
 
-  tableName=$(basename -s ".frm" $frmFile)
+  tableName=${frmFile##*/}
+  tableName=${tableName%.frm}
   ibdfilename=$tableName.ibd
   greptableName=${tableName//_/\\\\_}
   # parse ibd file
