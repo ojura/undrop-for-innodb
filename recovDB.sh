@@ -1,6 +1,6 @@
 #!/bin/bash
 # DB Recovery script
-# v2
+# v3
 
 # init
 reset
@@ -63,8 +63,22 @@ do
   # if file per table
   if [ -e $ibdFile ]
   then
-    ./c_parser -6f pages-$ibdfilename/FIL_PAGE_INDEX/`printf %016u $posPrimary`.page -t ./dumps/$tableName.sql  > ./dumps/$tableName.data 2>> ./dumps/LoadData.sql
+    if [ -f pages-$ibdfilename/FIL_PAGE_INDEX/`printf %016u $posPrimary`.page ]
+    then
+      # recover from PK
+      ./c_parser -6f pages-$ibdfilename/FIL_PAGE_INDEX/`printf %016u $posPrimary`.page -t ./dumps/$tableName.sql  > ./dumps/$tableName.data 2>> ./dumps/LoadData.sql
+    else
+      for pageFile in pages-$ibdfilename/FIL_PAGE_INDEX/*.page
+      do
+        ipageFile=${pageFile##*/}
+        ipageFile=${ipageFile%.page}
+	echo $ipageFile
+	# try recover from other FIL_PAGE_INDEX (bad pointer in ibdata1)
+        ./c_parser -6f $pageFile -t ./dumps/$tableName.sql  > ./dumps/$tableName$ipageFile.data 2>> ./dumps/LoadData.sql
+      done
+    fi
   else
+    # recover from ibdata1
     ./c_parser -6f pages-ibdata1/FIL_PAGE_INDEX/`printf %016u $posPrimary`.page -t ./dumps/$tableName.sql  > ./dumps/$tableName.data 2>> ./dumps/LoadData.sql
   fi
 done
