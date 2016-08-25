@@ -57,6 +57,7 @@ do
   sed -i "s/COMMENT '.*'//g" ./dumps/$tableName.sql
   sed -i "s/COMMENT='.*'//g" ./dumps/$tableName.sql
   sed -i '$s/$/;/' ./dumps/$tableName.sql
+  sed -i "s/'.*''.*'/''/g" ./dumps/$tableName.sql
 
   # Retrieve Data
   echo "Retrieve data for $tableName"
