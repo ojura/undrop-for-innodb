@@ -1,6 +1,6 @@
 #!/bin/bash
 # DB Recovery script
-# v3
+# v4
 
 # init
 reset
@@ -22,21 +22,22 @@ do
 
   tableName=${frmFile##*/}
   tableName=${tableName%.frm}
-  ibdfilename=$tableName.ibd
-  greptableName=${tableName//_/\\\\_}
-  # parse ibd file
-  ibdFile=$1/$2/$ibdfilename
-  
-  # if file per table
-  if [ -e $ibdFile ]
+
+  # recover data dictionary
+  echo "Recover data dictionary for table $tableName"
+  mysqlfrm --server=root@127.0.0.1 --port=3307 $frmFile --user=root > ./dumps/$tableName.sql
+
+  # check if it's not a view
+  testView=$(cat ./dumps/$tableName.sql | grep -oP 'CREATE ALGORITHM=.* DEFINER=.* SQL SECURITY .* VIEW `')
+  if [ "" != "$testView" ]
   then
-    echo "Parse $ibdFile"
-    rm -rf ./pages-$ibdfilename
-    ./stream_parser -f $ibdFile > /dev/null 2>&1
+    echo "Skip view"
+    continue
   fi
 
   # Find table index position
   echo "Find indexes table position for $tableName"
+  greptableName=${tableName//_/\\\\_}
   posTable=$(./c_parser -4f ./pages-ibdata1/FIL_PAGE_INDEX/0000000000000001.page -t dictionary/SYS_TABLES.sql | grep -oP "\"$2/$greptableName\"\t[0-9]*" | head -1 | grep -oP "[0-9]*$")
   echo "Indexes table position position for $tableName : $posTable"
 
@@ -44,10 +45,6 @@ do
   echo "Find primary index position for $tableName"
   posPrimary=$(./c_parser -4f pages-ibdata1/FIL_PAGE_INDEX/0000000000000003.page -t dictionary/SYS_INDEXES.sql | grep -oP "$posTable\t[0-9]*\t\"PRIMARY" | head -1 | grep -oP "\t[0-9]*\t" | grep -oP "[0-9]*")
   echo "Primary index position for $tableName : $posPrimary"
-
-  # recover data dictionary
-  echo "Recover data dictionary for table $tableName"
-  mysqlfrm --server=root@127.0.0.1 --port=3307 $frmFile --user=root > ./dumps/$tableName.sql
 
   # Clean up some things for c_paser
   echo "Clean table DDL ./dumps/$tableName.sql"
@@ -61,26 +58,38 @@ do
 
   # Retrieve Data
   echo "Retrieve data for $tableName"
+
+  ibdfilename=$tableName.ibd
+  ibdFile=$1/$2/$ibdfilename
+
   # if file per table
   if [ -e $ibdFile ]
   then
-    if [ -f pages-$ibdfilename/FIL_PAGE_INDEX/`printf %016u $posPrimary`.page ]
+    echo "Parse $ibdFile"
+    rm -rf ./pages-$ibdfilename
+    ./stream_parser -f $ibdFile > /dev/null 2>&1
+  else
+    ibdfilename="ibdata1"
+    # PAGE_INDEX not exist > exit
+    if [ ! -f pages-$ibdfilename/FIL_PAGE_INDEX/`printf %016u $posPrimary`.page ]
     then
-      # recover from PK
-      ./c_parser -6f pages-$ibdfilename/FIL_PAGE_INDEX/`printf %016u $posPrimary`.page -t ./dumps/$tableName.sql  > ./dumps/$tableName.data 2>> ./dumps/LoadData.sql
-    else
+      continue
+    fi
+  fi
+
+  if [ -f pages-$ibdfilename/FIL_PAGE_INDEX/`printf %016u $posPrimary`.page ]
+  then
+    # recover from PK
+    ./c_parser -6f pages-$ibdfilename/FIL_PAGE_INDEX/`printf %016u $posPrimary`.page -b pages-$ibdfilename/FIL_PAGE_TYPE_BLOB -t ./dumps/$tableName.sql  > ./dumps/$tableName 2>> ./dumps/LoadData.sql
+  else
+    # recover from other FIL_PAGE_INDEX (bad pointer in ibdata1)
       for pageFile in pages-$ibdfilename/FIL_PAGE_INDEX/*.page
       do
-        ipageFile=${pageFile##*/}
-        ipageFile=${ipageFile%.page}
-	echo $ipageFile
-	# try recover from other FIL_PAGE_INDEX (bad pointer in ibdata1)
-        ./c_parser -6f $pageFile -t ./dumps/$tableName.sql  > ./dumps/$tableName$ipageFile.data 2>> ./dumps/LoadData.sql
-      done
-    fi
-  else
-    # recover from ibdata1
-    ./c_parser -6f pages-ibdata1/FIL_PAGE_INDEX/`printf %016u $posPrimary`.page -t ./dumps/$tableName.sql  > ./dumps/$tableName.data 2>> ./dumps/LoadData.sql
+      ipageFile=${pageFile##*/}
+      ipageFile=${ipageFile%.page}
+      echo $ipageFile
+      ./c_parser -6f $pageFile -b pages-$ibdfilename/FIL_PAGE_TYPE_BLOB -t ./dumps/$tableName.sql  > ./dumps/$tableName$ipageFile 2>> ./dumps/LoadData.sql
+    done
   fi
 done
 
