@@ -2,7 +2,7 @@
 
 This is a fork of the - missing in action - github official repository [undrop-for-innodb](http://github.com/twindb/undrop-for-innodb/) bundled with my database recovery scripts !
 
-Please note that I am not affiliated with TwinDB an provide no support for this tool. If you need professional support goto >> Commercial Support and Data Recovery Service
+[Aleksandr Kuzminsky](https://www.linkedin.com/in/akuzminsky) is the original author of TwinDB data recovery toolkit. Please note that I am not affiliated with TwinDB. If you need professional support goto [TwinDB](https://twindb.com/)
 
 ## Supported Failures
 
@@ -41,7 +41,10 @@ To build the toolkit run make in the source code root:
 # make
 ```
 ## Usage
-There is a series of blog posts that describe in great details recovery from different failures.
+
+You can consult [my blog](http://mysql.on.windows.free.fr/index.php/category/undrop-for-innodb/) to read and comment the posts related to this tool.
+
+You can recover your database using the toolkit and detailed instructions from the following blog posts that describe in great details recovery from different failures.
 
  * [Recover Table Structure From InnoDB Dictionary](https://twindb.com/recover-table-structure-from-innodb-dictionary/) – how to generate CREATE TABLE statement if you have ibdata1 file.
  * [Take image from corrupted hard drive](https://twindb.com/take-image-from-corrupted-hard-drive/) – what you should do if a hard disk is dying.
@@ -51,13 +54,3 @@ There is a series of blog posts that describe in great details recovery from dif
  * [Recover InnoDB dictionary](https://twindb.com/how-to-recover-innodb-dictionary/) – how to recover and read InnoDB dictionary tables.
  * [UnDROP tool for InnoDB](https://twindb.com/undrop-tool-for-innodb/) – describes tools of the toolkit, their usage, command line options.
  * [InnoDB dictionary](https://twindb.com/innodb-dictionary/) – describes InnoDB dictionary, its tables and format.
-
-## Commercial Support and Data Recovery Service
-
-You can recover your database using the toolkit and detailed instructions from the blog posts. 
-TwinDB can help you to do it much faster.
-
-[Aleksandr Kuzminsky](https://www.linkedin.com/in/akuzminsky) is an author of TwinDB data recovery toolkit and its forks. 
-Since 2008 he dealt with many hundreds recovery cases.
-
-Check [MySQL Data Recovery Service](https://twindb.com/mysql-data-recovery/) to learn more about prices, prerequisites and contact details.
