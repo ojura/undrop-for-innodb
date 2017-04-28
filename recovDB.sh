@@ -50,7 +50,7 @@ do
   # Clean up some things for c_paser
   echo "Clean table DDL ./dumps/$tableName.sql"
   sed -i '/^#/d' ./dumps/$tableName.sql
-  sed -i "s/$2//g" ./dumps/$tableName.sql
+  sed -i "s/$2//" ./dumps/$tableName.sql
   sed -i 's/``.//g' ./dumps/$tableName.sql
   sed -i "s/COMMENT '.*'//g" ./dumps/$tableName.sql
   sed -i "s/COMMENT='.*'//g" ./dumps/$tableName.sql
