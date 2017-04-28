@@ -37,8 +37,9 @@ do
 
   # Find table index position
   echo "Find indexes table position for $tableName"
+  grepdbName=${2//_/\\\\_}
   greptableName=${tableName//_/\\\\_}
-  posTable=$(./c_parser -4f ./pages-ibdata1/FIL_PAGE_INDEX/0000000000000001.page -t dictionary/SYS_TABLES.sql | grep -oP "\"$2/$greptableName\"\t[0-9]*" | head -1 | grep -oP "[0-9]*$")
+  posTable=$(./c_parser -4f ./pages-ibdata1/FIL_PAGE_INDEX/0000000000000001.page -t dictionary/SYS_TABLES.sql | grep -oP "\"$grepdbName/$greptableName\"\t[0-9]*" | head -1 | grep -oP "[0-9]*$")
   echo "Indexes table position position for $tableName : $posTable"
 
   # Find Primary position
