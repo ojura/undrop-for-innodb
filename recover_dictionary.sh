@@ -55,7 +55,7 @@ echo "Loading dictionary tables data:"
 for t in SYS_TABLES SYS_COLUMNS SYS_INDEXES SYS_FIELDS
 do
     echo -n "$t ... "
-    mysql test < dumps/default/$t.sql
+    mysql --local-infile test < dumps/default/$t.sql
     nr=`less dumps/default/$t | grep -v -- '--'| wc -l`
     echo -n "$nr recs "
     echo "OK"
